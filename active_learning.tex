@@ -1,0 +1,25 @@
+\section{Active Learning}
+% {\fontsize{9}{0}\selectfont \mbox{Get $x$ max. reducing uncertainty}}
+Collect data maximally reducing uncertainty.\\
+Find $S \subseteq D$ maximizing mutual information
+{\fontsize{9}{6}\selectfont $I(f;y_S) =H(f) - H(f \mid y_S) \stackrel{G.P.}= \frac{1}{2} \log |I + \sigma^{-2} K_S|$}.
+
+\rsubsection*{Greedy Optimization}
+Given $S_t = \{x_1,.., x_t\}$, take
+
+$x_{t+1} = \argmax_{x } F(S_t +x) \stackrel{G.P.}= \argmax_{x} \sigma_t^2(x)$.
+
+% \vspace*{-1mm}
+% $\rightarrow$ constant-factor near optimal.
+% \vspace*{-1mm}
+
+Uncertainty Sampling:\\
+\hspace*{3mm}$x_{t+1} = \argmax_{x} \sigma_{t}^2(x)$
+
+Heteroscedastic Noise:\\
+\hspace*{3mm}$x_{t+1}\argmax_{x} {\sigma_t^2(x)}/{\sigma_n^2(x)}$
+
+
+% \rsubsection*{BALD}
+%  $x_{t+1} = \argmax_x I(\theta; y_x | (x, y)_{1:t})
+%   \\= \argmax_x H(y \mid x, (x,y)_{1:t}) - \mathbb{E}_{\theta \mid (x,y)_{1:t}}[H(y \mid x, \theta)]$

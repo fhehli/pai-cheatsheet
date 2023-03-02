@@ -1,0 +1,167 @@
+\documentclass[11pt,landscape,a4paper,fleqn]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[ngerman]{babel}
+\usepackage{tikz}
+\usetikzlibrary{shapes,positioning,arrows,fit,calc,graphs,graphs.standard}
+\usepackage[nosf]{kpfonts}
+\usepackage[t1]{sourcesanspro}
+\usepackage{multicol}
+\usepackage{wrapfig}
+\usepackage[top=3mm,bottom=5mm,left=4mm,right=4mm]{geometry}
+\usepackage[framemethod=tikz]{mdframed}
+\usepackage{microtype}
+\usepackage{mathtools}
+\usepackage{ccicons}
+\usepackage{hyperref}
+\usepackage{xcolor}
+\usepackage{soul}
+\usepackage{amssymb}
+\usepackage[neveradjust]{paralist}
+\usepackage[shortlabels]{enumitem}
+\usepackage{bbm}
+\usepackage{listings}
+\usepackage{titlesec}
+\usepackage{anyfontsize}
+\usepackage{nicefrac}
+\usepackage{scalerel}
+\usepackage{datatool}
+%% Special characters for number sets, e.g. real or complex numbers.
+\newcommand{\C}{\mathbb{C}}
+\newcommand{\K}{\mathbb{K}}
+\newcommand{\N}{\mathbb{N}}
+\newcommand{\Q}{\mathbb{Q}}
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\Z}{\mathbb{Z}}
+\newcommand{\X}{\mathbb{X}}
+\renewcommand{\P}{\mathbb{P}}
+
+\newcommand{\No}{\mathcal{N}}
+
+\newcommand{\br}{\par\medskip\noindent}
+\newcommand{\E}{\mathbb{E}}
+% \newcommand{\P}{\mathbb{P}}
+\newcommand{\Oh}{\mathcal{O}}
+% \newcommand{\vphi}{\varphi}
+% \newcommand{\veps}{\varepsilon} 
+\newcommand{\bd}{\textbf}
+\newcommand{\equi}{\Leftrightarrow}
+\newcommand{\imp}{\Rightarrow}
+\newcommand{\emp}{\varnothing}
+\newcommand{\subs}{\subseteq}
+\newcommand{\ol}{\overline}
+\newcommand{\ra}{\rangle}
+\newcommand{\la}{\langle}
+\newcommand{\ox}{\otimes}
+\newcommand*\dx{\mathop{}\!\mathrm{d}x}
+\newcommand*\dy{\mathop{}\!\mathrm{d}y}
+\newcommand*\dz{\mathop{}\!\mathrm{d}z}
+
+\DeclareMathOperator*{\argmax}{arg\,max}
+\DeclareMathOperator*{\argmin}{arg\,min}
+\DeclareMathOperator*{\vol}{vol}
+\DeclareMathOperator*{\Mat}{Mat}
+
+\let\bar\overline
+
+\definecolor{myblue}{cmyk}{1,.72,0,.68}
+\definecolor{myorange}{cmyk}{0,0.5,1,0}
+\definecolor{myorange2}{cmyk}{0,0.8,0.8,0}
+\definecolor{darkgreen}{cmyk}{0.97,0,1,0.57}
+\definecolor{mypink}{cmyk}{0, 0.7808, 0.4429, 0.1412}
+
+
+\pgfdeclarelayer{background}
+\pgfsetlayers{background,main}
+
+\everymath\expandafter{\the\everymath \color{myblue}}
+\everydisplay\expandafter{\the\everydisplay \color{myblue}}
+
+\renewcommand{\baselinestretch}{.8}
+\pagestyle{empty}
+
+\global\mdfdefinestyle{header}{%
+linecolor=gray,linewidth=1pt,%
+leftmargin=0mm,rightmargin=0mm,skipbelow=0mm,skipabove=0mm,
+}
+
+
+\makeatletter
+\renewcommand{\section}{\@startsection{section}
+								{1}%
+								{0mm}%
+                                {2pt}%
+                                {0.01pt}%x
+                                {\color{purple}\sffamily\small\bfseries}}
+
+\renewcommand{\subsection}{\@startsection{subsection}
+								{1}%
+								{0mm}%
+                                {2pt}%
+                                {0.1pt}%x
+                                {\color{black}\sffamily\bfseries}
+}
+
+% \newcommand{\sortitem}[1]{%
+% 	\DTLnewrow{list}% Create a new entry
+% 	\DTLnewdbentry{list}{description}{#1}% Add entry as description
+% }
+% \newenvironment{sortedlist}{%
+% 	\DTLifdbexists{list}{\DTLcleardb{list}}{\DTLnewdb{list}}% Create new/discard old list
+% }{%
+% 	\DTLsort{description}{list}% Sort list
+% 	\setdefaultleftmargin{1em}{2em}{}{}{}{}
+% 	\begin{compactitem}%
+% 		\DTLforeach*{list}{\theDesc=description}{%
+% 			\item \theDesc}% Print each item
+% 	\end{compactitem}%
+% }
+
+\newcommand*{\rsection}{%
+	\@startsection{section}%
+	{1}% level
+	{0mm}% indentation of heading from the left margin
+	{2pt}% absolute value = beforeskip
+	{0.01pt} %afterskip
+	{\color{purple}\sffamily\bfseries}
+	}
+
+\newcommand*{\rsubsection}{%
+	\@startsection{subsection}%
+	{1}% level
+	{0mm}% indentation of heading from the left margin
+	{2pt}% absolute value = beforeskip
+	{0.01pt} % afterskip
+	{\color{black}\sffamily\bfseries}}
+
+\makeatother
+\setlength{\parindent}{0pt}
+
+\newcommand{\red}[1]{\textcolor{red}{#1}}
+
+\newcommand{\iid}{\stackrel{\mathclap{\normalfont\mbox{\tiny{iid}}}}{=}}
+
+\newcommand{\mhl}[1]{\setlength{\fboxsep}{0pt}\colorbox{yellow}{#1}}
+
+\newcommand{\indep}{\perp\!\!\!\perp}
+
+\newcommand{\myeq}{\hspace*{-1mm}=\hspace*{-1mm}}
+
+
+\begin{document}
+
+\small
+\begin{multicols*}{4}
+	
+\input{general.tex}
+\input{bayesian_regression.tex}
+\input{gaussian_processes.tex}
+\input{approximate_inference.tex}
+\input{mcmc.tex}
+\input{bnn.tex}
+\input{active_learning.tex}
+\input{bayesian_optimization.tex}
+\input{mdp.tex}
+\input{reinforcement_learning.tex}
+
+\end{multicols*}
+\end{document}

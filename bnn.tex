@@ -1,0 +1,13 @@
+\section{Bayesian Neural Networks}
+% {\fontsize{9.5}{6}\selectfont MAP/SGD: $\hat{\theta} = amin_\theta -\log p(\theta) - \sum_{i} \log p(y_i | x_i, \theta)$}
+% $\rightarrow$ Handles heteroscedastic noise well, fails to predict epistemic uncertainty $\rightarrow$ use VI
+\rsubsection*{MAP}
+$\hat{\theta} = \argmax_\theta \log p(\theta) + \sum_{i} \log p(y_i | x_i, \theta)$
+
+\rsubsection*{Variational Inference}
+SGD on ELBO to find approximate posterior $q_\lambda$. Draw samples $\theta^{j} \sim q_\lambda$ and approximate
+{$p(y^* \mid x^*, x_{1:n}, y_{1:n}) \approx \frac{1}{m} \sum_j p(y^* \mid x^*, \theta^{j})$.}
+
+% \textbf{MCMC}: roduce seq. of weights {\fontsize{9}{6}\selectfont $\theta^{(1)},..,\theta^{(T)}$} via SGLD, LD, SG-HMC; predict by avg. weights.
+
+%Summarize $\theta^{(i)}$ by subsampling or Gaussian approx.

@@ -1,0 +1,61 @@
+\section*{General}
+$\operatorname{var}(AX)=A\operatorname{var}(X)A^T$\\
+$\big[\begin{smallmatrix}
+a&b \\ 
+c&d
+\end{smallmatrix}\big]^{-1}=\frac{1}{ad-bc}
+\big[\begin{smallmatrix}
+d&-b \\ 
+-c&a
+\end{smallmatrix}\big]
+$\vspace*{1mm}\\
+$P(X_1,..,X_n) = P(X_1)P(X_2| X_1)\cdots P(X_n|X_{1:n-1})$
+
+\rsubsection*{Gaussian}
+$p(x)=\frac{1}{\sqrt{(2\pi)^{n}{|\Sigma|}}}\exp\left(-\frac{1}{2}(x-\mu)^T\Sigma^{-1}(x-\mu)\right)$\\
+$\log p(x)=-\frac{1}{2}\log|\Sigma|-\frac{1}{2}(x-\mu)^T\Sigma^{-1}(x-\mu)+C$
+
+\rsubsection*{Conditioning Gaussians}
+$X_A \mid X_B = x_B \sim \mathcal{N}(\mu_{A\mid B}, \Sigma_{A\mid B})$ where\\ 
+\hspace*{3mm} {$\mu_{A\mid B} = \mu_A + \Sigma_{AB} \Sigma_{BB}^{-1} (x_B - \mu_B)$},  \\
+\hspace*{3mm} {$\Sigma_{A\mid B} = \Sigma_{AA} - \Sigma_{AB} \Sigma_{BB}^{-1} \Sigma_{BA}$}.
+
+% KL divergence
+\rsubsection*{KL Divergence}
+${KL}(P||Q) = \mathbb{E}_p[\log(\frac{p}{q})]$
+
+If $P\sim\No(\mu_1,\Sigma_1)$ and $Q\sim\No(\mu_2,\Sigma_2)$, then
+$KL(P||Q)=\frac{1}{2}\big(\operatorname{tr}\Sigma_2^{-1}\Sigma_1
++(\mu_2-\mu_1)^T\Sigma_2^{-1}(\mu_2-\mu_1)
+\\\hspace*{6mm}-d+\log\frac{|\Sigma_2|}{|\Sigma_1|}\big)$
+
+% Entropy
+\rsubsection*{Entropy}
+$H(p) = \mathbb{E}_p[-\log p]$\\
+$X\sim\No(\mu, \Sigma): \ H(X) = \frac{1}{2}  \log\big((2\pi e)^n|\Sigma|\big)$
+
+\rsubsection*{Conditional Entropy}
+$H(X\mid Y)=\E_{p(x,y)}[-\log p(x\mid y)]$\\
+$H(X,Y) = H(X) + H(Y \mid  X)$\\
+$H(S \mid  T) \geq H(S \mid  T, U)$
+
+\rsubsection*{Mutual Information}
+{{$I(X;Y) = H(X) - H(X \mid Y) = I(Y;X)\geq 0$}}
+
+{$X \sim N(\mu, \Sigma),\ Y = X+ \epsilon, \ \epsilon\sim N(0, \sigma^2 I)$\\
+$\rightarrow I(X;Y) = \frac{1}{2} \log |I + \sigma^{-2} \Sigma|$}
+
+
+\rsubsection*{Bayesian Learning}
+Prediction:\\ $p(y |  x, x_{1:n}, y_{1:n}) = \int p(y |  x, \theta) p(\theta |  x_{1:n}, y_{1:n}) d\theta$
+
+\rsubsection*{Convexity} 
+$f(t x + (1-t)y) \leq t f(x) + (1-t) f(y)$\\
+$f$ convex, $g$ affine $\imp f\circ g$ convex\\
+$f$ non-decreasing, $g$ convex $\imp f\circ g$ convex
+
+\rsubsection*{Change of Variables}
+If $Y = g(X)$, then\\\hspace*{3mm}$p_Y(y) = p_X(g^{-1}(y)) \cdot |\det D g^{-1}(y)|$.
+
+\rsubsection*{Complexity}
+Matrix mult. $A\in\R^{n\times k},B\in\R^{k\times d}$ is $\Theta(n k d)$

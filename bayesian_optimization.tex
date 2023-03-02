@@ -1,0 +1,28 @@
+
+% \vspace*{1mm}
+\section{Bayesian Optimization}
+Sequentially pick $x_1,..,x_T \in D$, get $y_t = f(x_t) + \epsilon_t$,
+find $\max_x f(x)$.
+
+\rsubsection*{Cumulative Regret}
+ $R_T = \sum_{t=1}^{T} \max_{x \in D} f(x) - f(x_t)$
+
+\rsubsection*{GP-UCB} 
+{$x_t = \argmax_{x \in D} \mu_{t-1}(x) + \beta_t \sigma_{t-1}(x)$}
+
+(upper confidence bound $\geq$ best lower bound)
+
+% $\mu(x), \sigma(x)$ from GP marginal. 
+% $\beta_t$ EE-tradeoff.
+
+Thm: $f \sim GP$, correct $\beta_t:\frac{1}{T}R_T = \mathcal{O}^*(\sqrt{\nicefrac{\gamma_T}{T}})$, $\gamma_T = \max_{|S| \leq T} I(f; y_S)$ (information gain).
+
+\rsubsection*{EI} choose $x_t = \arg\max_{x } EI(x)$ where
+
+$EI(x) = \int \max(0, y^* - y) p(y \mid x) dy$.
+
+
+
+\rsubsection*{Thompson sampling} 
+draw sample from GP {$f \mid (x, y)_{1:t}$},
+select $x_{t+1} \in \arg\max_{x \in D} \tilde{f}(x)$.

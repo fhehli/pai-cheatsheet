@@ -1,0 +1,275 @@
+\vspace*{1mm}
+\section{Reinforcement Learning} 
+Planning in unknown MDP.
+
+- \textcolor{black}{On}-policy: agent has full control (actions)
+
+- \textcolor{black}{Off}-policy: no control, only observational data 
+
+\section{Model-Based RL}
+{Learn MDP and use optimal $\pi$.}
+
+MLE estimate from path trajectory $\tau$:
+
+{\fontsize{8.8}{6}\selectfont $P(X_{t+1} \mid X_t, A) \approx \frac{Cnt(X_{t+1}, X_t, A)}{Cnt(X_t, A)}$;
+$r(x,a) \approx {N_{x,a}}^{-1} \hspace*{-5mm} \sum\limits_{t: X_t = x, A_t = a} \hspace*{-5mm} R_t$}
+
+\rsubsection*{$\mathbf{\epsilon_t}$-greedy:} Tradeoff exploration-exploitation
+W.p. $\epsilon_t$: rand. action; w.p. $1 - \epsilon_t$: best action.
+If $\epsilon_t$ satisfies RM $\implies$ converge to $\pi^*$ w.p. 1.
+
+\textbf{Robbins-Monro (RM)} 
+{\fontsize{10}{6}\selectfont$\sum_t \epsilon_t = \infty$, $\sum_t \epsilon_t^2 < \infty$}
+
+\rsubsection*{$\mathbf{R_{max}}$-Algorithm} 
+Assume $r(x,a) \in[0, R_{max}]$. Set unknown $r(x,a)$ to $R_{max}$, 
+add {fairy tale state $x^*$}, set $P(x^* \mid x,a) = 1$, compute $\pi$. Repeat: run $\pi$ while updating $r(x,a)$, $P(x' \mid x,a)$, then recompute $\pi$.
+
+\textcolor{violet}{Thm}: W.p. $1 - \delta$, $R_{max}$
+will reach $\epsilon$-opt policy in \#steps polynomial in $|X|, |A|, T, \nicefrac{1}{\epsilon}, \log(1 - \delta), R_{max}$.
+
+Note: MDP is assumed ergodic.
+
+\textbf{Problems of Model-based RL:}
+
+ - Memory required: $P(x'\mid x,a) \approx \mathcal{O}(|X|^2 |A|)$, $r(x,a) \approx \mathcal{O}(|X||A|)$
+
+- Computation: repeatedly solve MDP
+
+
+% \vspace*{1mm}
+\section{Model-Free RL} 
+{Directly estimate value function}
+
+\rsubsection*{TD-Learning {\textcolor{black}{(On)}}}
+ Follow $\pi$, get $(x,a,r,x')$. 
+
+{$\hat{V}^\pi(x) \leftarrow (1 - \alpha_t) \hat{V}^\pi(x) + \alpha_t (r + \gamma \hat{V}^\pi(x'))$}
+
+Thm: If $\alpha_t$ satisfies RM and all $(x,a)$ are chosen
+infinitely often, then $\hat{V}$ converges to $V^\pi$ a.s.
+
+\rsubsection*{Q-learning 
+{\textcolor{black}{(Off)}}}
+%, $V^*(x), \pi^*(x)$ can be derived.
+
+Init ${Q(x,a) = \frac{R_{max}}{1 - \gamma} \prod_{t=1}^{T_{init}} (1 - \alpha_t)^{-1}}$.
+
+Pick $a$ (e.g. $\epsilon_t$ greedy), get $(x,a,r,x')$: 
+{$Q(x,a) \leftarrow (1 - \alpha_t) Q(x,a) + \alpha_t (r + \gamma \max_{a'} Q(x', a'))$}
+
+At convergence $\pi_G(x) = \arg\max_a Q(x,a)$.
+
+Thm: If $\alpha_t$ satisfies RM and all $(x,a)$ are chosen
+infinitely often, then $Q$ converges to $Q^*$ a.s. Same PAC guarantee
+as for $R_{max}.$
+
+Computation time: $\mathcal{O}(|A|)$, Memory: $\mathcal{O}(|X||A|)$
+
+%\textbf{SARSA} {\fontsize{9}{6}\selectfont \textcolor{black}{(On)}}-policy version of Q-learning
+
+\section{RL via Function Approximation} 
+{Learn approximation of (action-)value function
+$V(x; \theta), Q(x,a;\theta)$}.
+
+\rsubsection*{TD-learning as SGD}
+% { \textcolor{black}{(On)}} 
+Tabular TD update is equivalent to SGD on the 
+loss 
+$l= \frac{1}{2}(V(x;\theta) - r - \gamma V(x'; \theta_{old})^2$. 
+
+\rsubsection*{Parametric Q-learning {\textcolor{black}{(Off)}}} 
+% \textcolor{red}{slow}
+
+SGD on the loss \\$l=\frac{1}{2}(Q(x,a;\theta) -r - \gamma \max_{a'}Q(x',a';\theta))^2$. 
+\\% Until converged:
+% Pick action $a$, observe $r,x'$. Update: $\theta \leftarrow \theta - \alpha_t \nabla_\theta l_2$
+% $\Leftrightarrow$ \mhl{$\theta \leftarrow \theta - \alpha_t \delta \nabla_\theta Q(x,a;\theta)$}
+% \rsubsection*{DQN{\textcolor{black}{(Off)}}}
+DQN: Q-learning with NN as func. approx. 
+Use experience replay data $D$, cloned network to maintain constant 
+NN across episode.
+
+{\fontsize{10}{6}\selectfont$L(\theta) = \hspace*{-4mm} \sum\limits_{(x,a,r,x') \in D} 
+\hspace*{-4mm} (r + \gamma {\max_{a'} Q(x', a'; \theta^{old})} - 
+Q(x,a;\theta))^2$}
+
+{Double DQN}: Use new NN to evaluate
+
+$\max_a$; prevents maximization bias.
+
+$L^{{\scaleobj{.55}{ DDQN}}} (\theta) = \hspace*{-4mm} \sum\limits_{(x,a,r,x') \in D}
+\hspace*{-4mm} [r + \gamma \max_{a'} Q(x', a^*(\theta); \theta^{old})$
+
+$ - Q(x,a;\theta) ]^2$,
+$a^*(\theta) = \arg\max_{a'} Q(x', a'; \theta)$
+
+Finding $a_t = \arg\max_a Q(x_t,a;\theta)$ is intractable for ${|A|}$ large. In gradient, $a^*$ is ignored.
+
+
+\section{Policy Gradient Methods} 
+% Parametric policy $\pi_\theta$
+Maximize $J(\theta)=\mathbb{E}_{\pi_\theta} [\sum_{t=0}^{T} \gamma^t r(x_t,a_t)]$
+ by SGD.\\
+% $\tau = (x, a, r, x')_{0:T}$, 
+% $r(\tau) = \sum_{t=0}^{T} \gamma^t r_t$
+% Theorem:
+{\fontsize{10}{6}\selectfont$\nabla_\theta J(\theta)
+ = \nabla_\theta \mathbb{E}_{\tau \sim \pi_\theta} r(\tau) 
+ = \mathbb{E}_{\tau \sim \pi_\theta} [r(\tau) \nabla_\theta \log \pi_\theta(\tau)]$}
+
+MDP ($\tau =(x,a,r,x')_{1:T})$: \ \ {$\pi_\theta(\tau) \\= p(x_0) \prod_{t=0}^{T} \pi(a_t \mid x_t; \theta) p(x_{t+1} \mid x_t, a_t)$}
+
+{$\rightarrow\nabla_\theta J(\theta) = \mathbb{E}_{\tau \sim \pi_\theta} [r(\tau) \sum_{t=0}^{T} \nabla_\theta \log \pi(a_t \mid x_t; \theta)]$}
+
+Can reduce variance via baselines:
+
+\mbox{\fontsize{9}{6}\selectfont $\mathbb{E}_{\tau \sim \pi_\theta} 
+[r(\tau) \nabla \log \pi_\theta(\tau)] = \mathbb{E}_{\tau \sim \pi_\theta}
+ [{(r(\tau) - b)} \nabla \log \pi_\theta(\tau)]$}
+
+% {Rew2Go:} \mbox{$G_t = \sum_{t' = t}^{T} \gamma^{t' - t} r_{t'}$; $b_t(x_t) = T^{-1} \sum_{t=0}^{T-1} G_t$}
+
+% Basic REINFORCE gradient estimate
+E.g. {\fontsize{9}{6}\selectfont$\nabla J_T(\theta) = \mathbb{E}_{\tau \sim \pi_\theta} [\sum_{t=0}^T \gamma^t \textcolor{darkgreen}{G_t} \nabla_\theta \log \pi(a_t \mid x_t; \theta)]$}
+with $G_t = \sum_{m= 0}^{T-t} \gamma^{m} r_{t+m}$.
+% Mean over returns: \textcolor{darkgreen}{replace $\textcolor{darkgreen}{G_t}$ with $(G_t - b_t(x_t))$}
+
+
+\rsubsection*{REINFORCE \textcolor{black}{(On)}}
+Init $\pi(a \mid x; \theta)$. Repeat: 
+
+Generate episode $(x_i, a_i, r_i)_{i=0}^T.$
+
+Compute ${G_t}$, update $\theta$:
+
+{$\theta \leftarrow \theta + \eta \sum_{t=0}^T\gamma^t {G_t} \nabla_\theta \log \pi(a_t \mid x_t; \theta)$}
+
+
+
+
+\rsubsection*{Advantage Function}
+{$A^\pi(x,a) = Q^\pi(x,a) - V^\pi(x)$}
+
+$\forall x,a, \pi: A^{\textcolor{red}{\pi^*}}(x,a) \leq 0; \ \max_a A^\pi(x,a) \geq 0$
+
+
+
+\section{Actor-Critic} %\textcolor{black}{(On)} 
+Approximate both $Q^\pi$ (or $V^\pi$) \textit{and} $\pi_\theta$. Reinterpret score gradient:
+{$\nabla_{\theta_\pi} J(\theta_\pi)$}$= \hspace*{0mm} \underset{\tau \sim \pi_\theta}{\mathbb{E}} \hspace*{-1mm} [\sum_{t=0}^\infty \gamma^t Q(x_t, a_t; \theta_Q) \nabla \log \pi(a_t \mid x_t; \theta_\pi)]$
+%$ = \mathbb{E}_{x \sim \rho^\theta, a \sim \pi_\theta(x)} [Q(x,a;\theta_Q) \nabla \log \pi(a \mid x; \theta_\pi)] = $
+{$ = \mathbb{E}_{(x,a) \sim \pi_\theta} [Q(x,a;\theta_Q) \nabla \log \pi(a \mid x; \theta_\pi)]$}
+
+Allows online updates:
+
+$\theta_\pi \leftarrow \theta_\pi + \eta_t \textcolor{darkgreen}{Q(x,a;\theta_Q)} \nabla \log \pi(a \mid x; \theta_\pi)$
+
+$\theta_Q \leftarrow \theta_Q  - \eta_t \delta \nabla Q(x,a;\theta_Q)$
+
+Variance reduction: \textcolor{darkgreen}{replace with} $Q(x,a;\theta_Q) - V(x; \theta_V)\rightarrow$ A2C.
+
+\section{Off-Policy Actor Critic} %\textcolor{black}{(off)}
+
+Replace ${\max_{a'} Q(x', a'; \theta^{old})}$ in DQN loss
+by $\textcolor{black}{\pi(x'; \theta_\pi)}$, where $\pi$ should follow
+the greedy policy to model ${\max_{a'}}$. This is equivalent to:
+
+$\theta_\pi^* \in \arg\max_\theta \textcolor{violet}{\mathbb{E}_{x \sim \mu} [Q(x,\pi(x;\theta); \theta_Q)]}$,
+
+where $\mu(x) > 0$ 'explores all states'. %If $Q(\cdot; \theta_Q), \pi(\cdot; \theta_\pi)$ diff'able, use backprop to get stoch. gradients.
+
+% $\nabla_\theta \textcolor{violet}{J(\theta)} = \mathbb{E}_{x \sim \mu} [\nabla_\theta Q(x,\pi(x;\theta); \theta_Q)]$
+
+% $\nabla_{\theta} Q(x,\pi(x;\theta) = \nabla_a Q(x,a)|_{a = \pi(x;\theta)} \cdot \nabla_{\theta} \pi(x; \theta)$
+
+Needs \textit{deterministic} $\pi$. Inject additional action noise to encourage exploration.
+
+\rsubsection*{Deep Deterministic Policy Gradient (DDPG)}
+
+Init $\theta_Q, \theta_\pi$. Rrepeat: Observe $x$, execute 
+$a = \pi(x; \theta_\pi) + \epsilon$, observe $r,x'$, store in $D$.
+If time to update: For some iterations: sample $B$ from $D$, compute targets
+
+$y = r+ \gamma Q(x', \pi(x', \theta_\pi^{old}), \theta_Q^{old})$, update
+
+% do GD ($\theta_Q$)/ GA ($\theta_\pi$), update $\theta^{old} \leftarrow (1 - \rho) \theta^{old} + \rho \theta$
+
+
+\iftrue
+Critic: $\theta_Q \leftarrow \theta_Q - \frac{\eta} {|B|} \sum_B\nabla (Q(x,a;\theta_Q) - y)^2$,
+
+Actor: $\theta_\pi  \leftarrow \theta_\pi + \frac{\eta} {|B|} \sum_B \nabla Q(x, \pi(x; \theta_\pi); \theta_Q)$,
+
+Params: $\theta_j^{old} \leftarrow (1 - \rho) \theta_j^{old} + \rho \theta_j,\ j \in \{\pi, Q \}$
+\fi
+
+
+\textbf{Randomized policy DDPG:} For Critic: sample $a' \sim \pi(x'; \theta_\pi^{old})$ to get unbiased $y$ estimates. For Actor: consider $\nabla_{\textcolor{red}{\theta_\pi}} \mathbb{E}_{a \sim \pi(x; \textcolor{red}{\theta_\pi})} Q(x,a;\theta_Q)$
+
+Reparametrization trick: $a = \psi(x; \theta_\pi, \epsilon)$
+
+$\nabla_{\theta_\pi} \mathbb{E}_{a \sim \pi_{\theta_\pi}} Q(x,a;\theta_Q) = \mathbb{E}_\epsilon \nabla_{\theta_\pi} Q(x, \psi(x; \theta_\pi, \epsilon); \theta_Q)$
+
+
+\section{Model-Based Deep RL}
+% \textcolor{black}{(off)} (cont. obsv. states)
+
+\rsubsection*{MPC (deterministic dynamics)}
+
+Given model $x_{t+1} = f(x_t, a_t)$, plan over finite horizon $H$.
+At each step $t$, maximize
+
+{$J_H(a_{t:t+H-1}) := \sum_{\tau = t:t+H-1} \gamma^{\tau - t} r_\tau(x_\tau(a_{t:\tau-1}), a_\tau)$}
+
+$x_\tau(a_{t:\tau-1}) = f(f(...(f(x_t, a_t), a_{t+1})..))$
+
+then carry out $a_t$, then replan.
+
+Optimize via gradient based methods (diff. $r, f$, cont. action) or via random shooting.
+
+\rsubsection*{Random shooting}
+Sample $a_{t:t+H-1}^{(i)}$
+and pick $\arg\max_i J_H(a_{t:t+H-1}^{(i)})$.
+
+\rsubsection*{MPC with Value estimate} $J_H(a_{t:t+H-1}) :=$
+{$\sum_{\tau = t:t+H-1} \gamma^{\tau - t} r_\tau(x_\tau(a_{t:\tau-1}), a_\tau) + \gamma^H V(x_{t+H})$}
+
+$H=1\rightarrow J_1(a_t) = Q(x_t, a_t)$; $\pi_G = \arg\max_a J_1(a)$
+
+\rsubsection*{MPC (stochastic dynamics)}
+
+{\fontsize{9}{6}\selectfont $\max\limits_{a_{t:t+H-1}} \underset{x_{t+1:t+H}}{\mathbb{E}}
+[ \hspace*{-1mm}\sum\limits_{\tau = t:t+H-1} \hspace*{-4mm} \gamma^{\tau - t} r_\tau + \gamma^H V(x_{t+H}) \mid a_{t:t+H-1} ]$}
+
+% Expectation via {MC trajectory sampling}: $x_{t+1} = f(x_t, a_t, \epsilon_t)$, get unbiased estimates of $J_H$ and approx via sample average.
+
+\rsubsection*{Parametrized policy} 
+$J_H(\theta) = \underset{x_0 \sim \mu}{\mathbb{E}} [ \sum\limits_{\tau = 0:H-1} \hspace*{-4mm} \gamma^{\tau} r_\tau + \gamma^H Q(x_{H}, \pi(x_H, \theta)) \mid \theta ]$
+
+($H = 0 \Leftrightarrow$ DDPG obj.)
+
+\rsubsection*{MPC (unknown dynamics)} follow $\pi$, learn $f, r, Q$ off-policy from replay buf, replan $\pi$.
+
+BUT: point estimates have poor performance, errors compound $\rightarrow$ use bayesian learning:
+
+Model distribution over $f$ (BNN, GP) and use (approximate) inference (exact, VI, MCMC,..).
+
+\rsubsection*{Greedy exploitation for model-based RL:} 
+% \textcolor{mypink}{(*)}
+
+1) $D=\{\}$, prior $P(f\mid\{\})$ 2) repeat: plan new $\pi$ to maximize
+{$\max_\pi \mathbb{E}_{f \sim P(\cdot \mid D)} J(\pi, f)$}, rollout 
+$\pi$, add new data to $D$, update posterior $P(f \mid D)$.
+
+\rsubsection*{PETS algorithm:} Ensemble of NNs predicting cond. 
+Gaussian transition distr., use MPC.
+
+\rsubsection*{Thompson Sampling:} Like greedy but in 2) sample model 
+{$f \sim P(\cdot \mid D)$} and then {$max_\pi J(\pi, f)$}
+
+Use epistemic noise to drive exploration.
+
+\rsubsection*{Optimistic exploration:} Like greedy
+but in 2) {$\max_\pi \max_{f \in M(D)} J(\pi, f)$};
+ with $M(D)$ set of plausible models given $D$.

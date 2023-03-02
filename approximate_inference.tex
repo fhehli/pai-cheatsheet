@@ -1,0 +1,29 @@
+\section{Approximative Inference} 
+\rsubsection*{Laplace Approximation}
+ $p(\theta\mid y_{1:n}) \approx \mathcal{N}(\hat{\theta}, \Lambda^{-1})=:q(\theta)$
+
+$\hat{\theta} = \arg\max_\theta p(\theta \mid y)$, $\Lambda = - \nabla^2 \log p(\hat{\theta} \mid y)$
+
+Prediction:
+\\$p(y^*\mid x^*, x_{1:n}, y_{1:n}) \approx \int p(y^* \mid f^*) q(f^*) df^*$,
+
+with $q(f^*) = \int p(f^* \mid \theta) q(\theta) d\theta$.
+
+\rsubsection*{Variational Inference}
+
+ ${p(\theta \mid y)} = \frac{1}{Z} p(\theta, y) \approx {q_\lambda(\theta)}$
+
+$q_{bwd}^* \in \arg\min_{q} KL(\textcolor{red}{q} || {p})$: $q \approx p$ where q large
+
+$q_{fwd}^* \in \arg\min_{q} KL({p} || \textcolor{red}{q})$: $q \approx p$ where p large
+
+$\argmin_q KL(q||p) \\
+=\argmax_q \mathbb{E}_{\theta \sim q}[\log p(y, \theta)] + H(q)\\
+=\argmax_q \mathbb{E}_{\theta \sim q}[\log p(y \mid\theta)] - KL(q||p(\theta))
+\\\leq \log p(y)$ (using Jensen) 
+
+% \textbf{Reparametrization Trick:} Suppose $\epsilon \sim \phi$, 
+
+% \vspace*{-1mm}
+% $\theta = g(\epsilon, \lambda)$. Then: $q(\theta | \lambda) = \phi(\epsilon) |\nabla_\epsilon g(\epsilon; \lambda)|^{-1}$ and \mhl{$\mathbb{E}_{\theta \sim q_\lambda}[f(\theta)] = \mathbb{E}_{\epsilon \sim \phi}[f(g(\epsilon; \lambda))]$}, which allows \mhl{$\nabla_\lambda \mathbb{E}_{\theta \sim q_\lambda}[f(\theta)] = \mathbb{E}_{\epsilon \sim \phi}[\nabla_\lambda f(g(\epsilon; \lambda))]$}
+

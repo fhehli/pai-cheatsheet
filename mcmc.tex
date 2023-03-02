@@ -1,0 +1,54 @@
+\section{MCMC}
+Approximate predictive distribution \\
+$p(y^* \mid  x^*, x_{1:n}, y_{1:n}) \\
+=\int \textcolor{darkgreen}{p(y^* \mid  x^*, \theta)} 
+p(\theta \mid  (x,y)_{1:n})d\theta \\
+=\mathbb{E}_{\theta \sim p(\theta \mid  (x,y)_{1:n})}[\textcolor{darkgreen}{f(\theta)}]
+\approx \frac{1}{m} \sum_{i=1}^{m} f(\theta^{(i)})$,\\ 
+with samples $\theta^{(i)} \sim p(\theta \mid  (x,y)_{1:n})$ 
+from MC with stationary distribution $p(\theta\mid  (x,y)_{1:n})$.
+
+\rsubsection*{Markov Chains}
+%  A stationary MC is a sequence of RVs $X_1,..,X_N$ with prior $P(X_1)$ and transition probability $P(X_{t+1} \mid  X_t)$ independent of $t$. 
+MC is {ergodic} if $\exists$ $t$ s.t. every state is reachable from every state
+in \textit{exactly} $t$ steps.
+
+% \textbf{Markovian Assumption}: $X_{t+1} \indep X_{1:t-1} \mid  X_t \, \forall t$
+
+% \textbf{Stationary Distribution}:
+A stationary ergodic MC has a unique and positive stationary distr. $\pi$,
+i.e. {$\forall x$: $\lim_{t \rightarrow \infty} P(X_t = x) = \pi(x)$}.
+
+If MC satisfies \textbf{detailed balance}\\ i.e. $\forall x,x':
+Q(x)P(x' \mid  x) = Q(x')P(x \mid  x')$,\\
+then $\pi(x) = \frac{1}{Z} Q(x)$.
+
+
+\rsubsection*{Hoeffding} If $f \in [0,C]$ and $x_i$ are iid samples of $X$, then\\
+\mbox{\fontsize{9.5}{6}\selectfont $P(|\mathbb{E}f(X) - \frac{1}{N}\sum_{i=1}^{N} f(x_i)| > \epsilon) \leq 2 exp(-2N\epsilon^2/C^2)$}
+
+% Given unnormalized distr. $Q(x) > 0$, design MC s.t. $\pi(x) = \frac{1}{Z} Q(x)$. 
+
+\rsubsection*{Gibbs Sampling}
+Init ${x^{0}}$, fix observed RVs $X_B$ to ${x_B}$\\
+For $t=1,..$: Set ${x}^{t} = {x}^{t-1}$ and 
+{select} ${j \in [m] \setminus B}.$ 
+Update $x_j^{t}$ by sampling from 
+$P(X_j \mid  {x}^{t}_{-i})$.
+
+
+\rsubsection*{Metropolis-Hastings}
+Needs proposal distr. $R(X' \mid  X)$.\\
+For $t=1,..$:\\ 
+1) Sample $x \sim R(X' \mid  X=x^{t-1})$\\
+2) Set $x^{t}=\begin{cases*}x, \text{with prob.}\min \{ 1, \frac{Q(x')R(x \mid  x')}{Q(x) R(x' \mid  x)}\}
+\\ x^{t-1}, \text{else}\end{cases*}$.
+
+% p(x) is log-concave if f is convex
+% Cont RVs: log-concave $p(x) = \frac{1}{Z} exp(-f(x))$, $f$ convex. M/H: $\alpha = \min \{ 1, \frac{R(x\mid x')}{R(x'\mid x)}exp(f(x) - f(x')\}$
+
+\rsubsection*{MALA/LMC} MH with $R(x' \mid  x) = \mathcal{N}(x - \tau \nabla f(x), 2\tau I)$.
+\rsubsection*{SGLD}
+MALA with subsampling of data for gradient computation of the 
+energy function.
+% $\rightarrow$ Use gradient information for convergence

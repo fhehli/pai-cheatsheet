@@ -1,0 +1,57 @@
+\section{Gaussian Processes} 
+Process s.t. $\forall A \subseteq \mathcal{X}, A = \{ x_1,.., x_m\}$
+it holds {$X_A = [X_{x_1},..,X_{x_m}] \sim \mathcal{N}(\mu_A, K_{AA})$} where
+
+$\mu_A^{(i)} = \mu(x_i)$ and $K_{AA}^{(ij)} = k(x_i, x_j)$   
+
+\textbf{Kernel} symmetric PSD
+%$k(x,x') = k_1(x,x') + k_2(x,x')$, $k(x,x') = k_1(x,x') \cdot k_2(x,x')$, $k(x,x') = c \cdot k_1(x,x'), c > 0$, $k(x,x') = f(k_1(x,x'))$, $f$: polynomial with coeffs $> 0$ or $f(x) = e^x$,
+
+stationary if $k(x,x') = k(x - x')$
+
+isotropic if $k(x,x') = k(\|x - x'\|_2)$
+
+RBF: smooth
+
+Exponential: cont. \& nowhere differentiable
+
+Matern: $\lceil\nu\rceil$-times differentiable
+
+\rsubsection*{Prediction} 
+
+$y_i = f(x_i) + \epsilon_i$, $\epsilon_i \sim \mathcal{N}(0, \sigma^2)$, \mbox{\fontsize{9.2}{6}\selectfont $A = \{x_1,..,x_m\}$}.
+
+Then {$f \mid  x_{1:m}, y_{1:m} \sim GP(\mu', k')$} where
+
+{$\mu'(x) = \mu(x) + \mathbf{k}_{x,A} (\mathbf{K}_{AA} + \sigma^2 \mathbf{I})^{-1} (\mathbf{y}_A - \mu_A)$}
+
+{$k'(x,x') = k(x, x') - \mathbf{k}_{x,A} (\mathbf{K}_{AA} + \sigma^2 \mathbf{I})^{-1} \mathbf{k}_{x',A}^T$}
+
+$k_{x,A} = [k(x, x_1),..., k(x, x_m)]$
+
+Predictive posterior:\\ $y^* \mid  x_{1:m}, y_{1:m},x^* \sim \mathcal{N}(\mu'(x^*), \sigma^2 + k'(x^*, x^*))$
+
+% \textbf{Forward sampling GP}: Chain rule on $P(f_1,..,f_n)$, iteratively sample univariate Gauss
+
+\rsubsection*{Model selection} Marginal likelihood maximization
+
+$\hat\theta=\argmax_\theta p(y \mid  X, \theta) \\= \argmax_\theta \int p(y \mid  X,f) p(f \mid  \theta) df$
+
+%\textbf{Model selection:} optimize marginal likelihood $p(y \mid  X, \theta) = \int p(y \mid  X,f) p(f \mid  \theta) df$:
+
+%$\hat{\theta} = amin_{\theta} -\log p(y \mid  X, \theta) = amin_{\theta} \textcolor{red}{y^T K_y(\theta)^{-1} y +}$
+
+%$\textcolor{red}{\log |K_y(\theta)|}$ $\rightarrow$ use GD $\theta^{t+1} \leftarrow \theta^t - \eta_t \nabla \textcolor{red}{L(\theta)}$
+
+\rsubsection*{Accelerating GPs} GP prediction has cost $\mathcal{O}(|A|^3)$
+
+Kernel approximation: Find $\phi$ s.t. $k(x,x') \approx \phi(x)^T \phi(x')$, then do BLR
+
+RFF: Stationary $k$ has Fourier transf.: 
+
+$k(x,x') = \int_{\mathbb{R}^d} p(\omega) e^{j \omega^T (x - x')} d\omega
+\\ {\approx \frac{1}{m} \sum_i z_{w^{(i)},b^{(i)}}(x) z_{w^{(i)},b^{(i)}}(x')}$\\
+$\rightarrow$ Set $\phi_i(x) = \frac{1}{\sqrt{m}} z_{w^{(i)},b^{(i)}}(x)$ where 
+
+$\omega \sim p(\omega), b \sim \mathcal{U}[0, 2\pi],$\\
+${z_{\omega, b}(x) = \sqrt{2} \cos(\omega^T x + b)}$
