@@ -1,0 +1,1 @@
+Cheatsheet for Probabilistic AI at ETH. Adapted from [this cheatsheet](https://github.com/ymerkli/eth-summaries/tree/master/probabilistic-artificial-intelligence).
